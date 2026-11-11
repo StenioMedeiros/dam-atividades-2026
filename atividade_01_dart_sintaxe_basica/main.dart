@@ -1,10 +1,17 @@
-enum Classificacao { semAvaliacoes, baixa, regular, alta }
+enum Classificacao {
+  semAvaliacoes,
+  baixa,
+  regular,
+  alta,
+}
 
 void main() {
   const notaMinima = 1;
   const notaMaxima = 5;
   const notaPositiva = 4;
 
+  // Todas as notas recebidas representam números inteiros.
+  // Algumas estão fora do intervalo permitido.
   final notasRecebidas = <String, List<String>>{
     'Agenda UFAPE': ['5', '4', '5', '0', '3', '6'],
     'Biblioteca Digital': ['3', '2', '4', '1'],
@@ -34,13 +41,20 @@ void main() {
   final categoriasUnicas = <String>{};
 
   // QUESTÃO 1 — PREPARAÇÃO DOS DADOS
+  // TODO: percorra todos os aplicativos e converta as notas para int.
+  // Guarde notas de 1 a 5 em notasValidasPorApp, conte as demais em
+  // descartadasPorApp e reúna as categorias em categoriasUnicas.
+  // Inclua no resultado também os aplicativos sem notas válidas.
   for (final entrada in notasRecebidas.entries) {
     final nomeApp = entrada.key;
+    final notasEmTexto = entrada.value;
+
     final notasValidas = <int>[];
     int descartadas = 0;
 
-    for (final texto in entrada.value) {
+    for (final texto in notasEmTexto) {
       final nota = int.parse(texto);
+
       if (nota >= notaMinima && nota <= notaMaxima) {
         notasValidas.add(nota);
       } else {
@@ -48,10 +62,11 @@ void main() {
       }
     }
 
-    // Registra também os aplicativos sem notas válidas.
     notasValidasPorApp[nomeApp] = notasValidas;
     descartadasPorApp[nomeApp] = descartadas;
+
     final categoria = categoriasPorApp[nomeApp];
+
     if (categoria != null) {
       categoriasUnicas.add(categoria);
     }
@@ -60,19 +75,27 @@ void main() {
   // QUESTÃO 2 — RELATÓRIO
   print('RELATÓRIO DE AVALIAÇÕES');
   print('======================');
-
+  
   for (final entrada in notasValidasPorApp.entries) {
     final nomeApp = entrada.key;
     final notas = entrada.value;
-    final categoria = categoriasPorApp[nomeApp] ?? 'Não informada';
-    final contato = contatosPorApp[nomeApp] ?? 'Não informado';
+
+    final categoria =
+        categoriasPorApp[nomeApp] ?? 'Não informada';
+
+    final contato =
+        contatosPorApp[nomeApp] ?? 'Não informado';
+
     final quantidadeValidas = notas.length;
-    final quantidadeDescartadas = descartadasPorApp[nomeApp] ?? 0;
+    final quantidadeDescartadas =
+        descartadasPorApp[nomeApp] ?? 0;
+
     int soma = 0;
     int quantidadePositivas = 0;
 
     for (final nota in notas) {
       soma += nota;
+
       if (nota >= notaPositiva) {
         quantidadePositivas++;
       }
@@ -80,14 +103,17 @@ void main() {
 
     String mediaTexto = 'Não calculado';
     String percentualTexto = 'Não calculado';
+
     Classificacao classificacao;
 
     if (notas.isEmpty) {
       classificacao = Classificacao.semAvaliacoes;
     } else {
-      // Calcula somente quando há notas válidas, evitando divisão por zero.
       final media = soma / quantidadeValidas;
-      final percentual = quantidadePositivas / quantidadeValidas * 100;
+
+      final percentual =
+          quantidadePositivas / quantidadeValidas * 100;
+
       mediaTexto = media.toStringAsFixed(2);
       percentualTexto = '${percentual.toStringAsFixed(2)}%';
 
@@ -101,16 +127,20 @@ void main() {
     }
 
     String classificacaoTexto;
+
     switch (classificacao) {
       case Classificacao.semAvaliacoes:
         classificacaoTexto = 'Sem avaliações';
         break;
+
       case Classificacao.baixa:
         classificacaoTexto = 'Baixa';
         break;
+
       case Classificacao.regular:
         classificacaoTexto = 'Regular';
         break;
+
       case Classificacao.alta:
         classificacaoTexto = 'Alta';
         break;
@@ -126,8 +156,15 @@ void main() {
     print('Classificação: $classificacaoTexto');
   }
 
+  // TODO: para cada aplicativo, mostre categoria, contato, quantidade de
+  // notas válidas e descartadas, média, porcentagem de notas positivas
+  // (maiores ou iguais a notaPositiva) e classificação.
+  // Use o enum Classificacao e switch para o texto da classificação.
+  // Trate a ausência de contato e evite divisão por zero.
+
   print('\nCATEGORIAS ENCONTRADAS');
+  // TODO: exiba as categorias sem repetições.
   for (final categoria in categoriasUnicas) {
     print(categoria);
-  }
+}
 }
